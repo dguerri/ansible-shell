@@ -222,14 +222,14 @@ class AnsibleShell(cmd.Cmd):
                 timeout=self.options.timeout,
                 private_key_file=self.options.private_key_file,
                 forks=self.options.forks,
-                sudo=self.options.sudo,
-                sudo_user=self.options.sudo_user,
+                become=self.options.become,
+                become_user=self.options.become_user,
+                become_method=self.options.become_method,
                 transport=self.options.connection,
                 subset=self.options.subset,
                 check=self.options.check,
                 diff=self.options.check,
                 callbacks=self.callbacks,
-                su=self.options.su,
                 inventory=self.ansible.inventory,
                 vault_pass=self.vault_password,
             ).run()
@@ -301,10 +301,10 @@ class AnsibleShell(cmd.Cmd):
         for item in items:
             print item
 
-    def do_sudo(self, arg):
+    def do_become(self, arg):
         """Toggle whether plays run with sudo"""
-        self.options.sudo = not self.options.sudo
-        print "sudo changed to %s" % self.options.sudo
+        self.options.become = not self.options.become
+        print "become changed to %s" % self.options.become
 
     def do_remote_user(self, arg):
         """Given a username, set the remote user plays are run by"""
@@ -314,13 +314,13 @@ class AnsibleShell(cmd.Cmd):
         else:
             print "Please specify a remote user, e.g. `remote_user root`"
 
-    def do_sudo_user(self, arg):
+    def do_become_user(self, arg):
         """Given a username, set the user that plays are run by when using sudo"""
         if arg:
-            self.options.sudo_user = arg
+            self.options.become_user = arg
         else:
-            print "Please specify a sudo user, e.g. `sudo_user jenkins`"
-            print "Current sudo user is %s" % self.options.sudo_user
+            print "Please specify a become user, e.g. `become_user jenkins`"
+            print "Current become user is %s" % self.options.become_user
 
     def do_exit(self, args):
         """Exits from the console"""
