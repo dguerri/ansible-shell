@@ -2,7 +2,7 @@
 
 # (c) 2014, Nandor Sivok <dominis@haxor.hu>
 #
-# ansible-shel is free software: you can redistribute it and/or modify
+# ansible-shell is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
@@ -131,6 +131,10 @@ class AnsibleShell(cmd.Cmd):
                           dest='step',
                           help='one-step-at-a-time: confirm each task before running')
 
+        parser.add_option('-w', '--password', default=None,
+                          dest='remote_pass',
+                          help='remote password to use')
+
         return parser.parse_args()
 
     def get_names(self):
@@ -219,6 +223,7 @@ class AnsibleShell(cmd.Cmd):
                 module_name=module,
                 module_args=module_args,
                 remote_user=self.options.remote_user,
+                remote_pass=self.options.remote_pass,
                 timeout=self.options.timeout,
                 private_key_file=self.options.private_key_file,
                 forks=self.options.forks,
@@ -313,6 +318,17 @@ class AnsibleShell(cmd.Cmd):
             self.set_prompt()
         else:
             print "Please specify a remote user, e.g. `remote_user root`"
+
+    def do_remote_pass(self, arg):
+        """Given a password, set the remote user password to use"""
+        if arg:
+            self.options.remote_pass = arg
+        else:
+            user_name = self.options.remote_user or 'remote user'
+            self.options.remote_pass = getpass.getpass(
+                "{user_name} password: ".format(user_name=user_name))
+        self.set_prompt()
+
 
     def do_become_user(self, arg):
         """Given a username, set the user that plays are run by when using sudo"""
